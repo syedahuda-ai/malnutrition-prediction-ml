@@ -48,7 +48,7 @@ st.markdown("""
 # ----------------------------
 # LOAD MODEL
 # ----------------------------
-model = pickle.load(open("malnutrition_model.pkl", "rb"))
+model = pickle.load(open("model.pkl", "rb"))
 
 # ----------------------------
 # TITLE
