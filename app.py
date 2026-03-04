@@ -8,30 +8,31 @@ import streamlit.components.v1 as components
 # PAGE CONFIG
 # -------------------------
 st.set_page_config(
-    page_title="Pediatric Clinical AI System",
-    page_icon="🏥",
+    page_title="Pediatric Smart AI System",
+    page_icon="🍼",
     layout="wide"
 )
 
 # -------------------------
 # THEME TOGGLE
 # -------------------------
-dark_mode = st.sidebar.toggle("🌙 ICU Dark Mode")
+dark_mode = st.sidebar.toggle("🌙 Pediatric Dark Mode")
 
 if dark_mode:
-    bg = "#0b1120"
-    card_bg = "rgba(15,23,42,0.85)"
+    bg = "linear-gradient(to right, #0f172a, #1e293b)"
+    card_bg = "rgba(30,41,59,0.8)"
     text = "white"
 else:
-    bg = "#f4f8fb"
-    card_bg = "rgba(255,255,255,0.9)"
+    bg = "linear-gradient(to right, #e0f2fe, #fdf2f8)"
+    card_bg = "rgba(255,255,255,0.85)"
     text = "#0f172a"
 
 # -------------------------
-# GLOBAL HOSPITAL CSS
+# GLOBAL CSS + FLOATING ITEMS
 # -------------------------
 st.markdown(f"""
 <style>
+
 body {{
     background: {bg};
     color: {text};
@@ -42,18 +43,23 @@ body {{
 }}
 
 .hospital-title {{
-    font-size:42px;
-    font-weight:800;
-    color:#1e3a8a;
+    font-size:45px;
+    font-weight:900;
+    text-align:center;
 }}
 
 .card {{
     background:{card_bg};
     backdrop-filter: blur(25px);
-    padding:25px;
-    border-radius:20px;
-    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
-    margin-bottom:20px;
+    padding:30px;
+    border-radius:25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+    transition: transform 0.4s ease;
+    margin-bottom:25px;
+}}
+
+.card:hover {{
+    transform: translateY(-8px) scale(1.02);
 }}
 
 .monitor {{
@@ -82,8 +88,31 @@ body {{
     from {{ transform: translateX(0); }}
     to {{ transform: translateX(-50%); }}
 }}
+
+/* Floating Baby Elements */
+.floating {{
+    position: fixed;
+    font-size: 50px;
+    animation: floatUp 18s linear infinite;
+    opacity: 0.5;
+    z-index: 0;
+}}
+
+@keyframes floatUp {{
+    0% {{ transform: translateY(100vh) rotate(0deg); }}
+    100% {{ transform: translateY(-10vh) rotate(360deg); }}
+}}
+
 </style>
 """, unsafe_allow_html=True)
+
+# Floating Pacifiers & Toys
+items = ["🍼", "🧸", "👶", "🍼", "🧸"]
+for i, item in enumerate(items):
+    st.markdown(
+        f'<div class="floating" style="left:{i*18+5}%; animation-duration:{12+i*2}s;">{item}</div>',
+        unsafe_allow_html=True
+    )
 
 # -------------------------
 # LOAD MODEL
@@ -93,9 +122,8 @@ model = pickle.load(open("model.pkl", "rb"))
 # -------------------------
 # HEADER
 # -------------------------
-st.markdown('<div class="hospital-title">🏥 Pediatric Clinical AI Monitoring System</div>', unsafe_allow_html=True)
+st.markdown('<div class="hospital-title">🍼 Pediatric Smart AI Monitoring System</div>', unsafe_allow_html=True)
 st.write("Advanced Malnutrition Risk Assessment Dashboard")
-
 st.write("---")
 
 # -------------------------
@@ -104,11 +132,10 @@ st.write("---")
 col1, col2 = st.columns([1,1])
 
 # =========================
-# LEFT PANEL – PATIENT INPUT
+# LEFT PANEL – INPUT
 # =========================
 with col1:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-
     st.subheader("Patient Information")
 
     age = st.slider("Age (Months)", 1, 60, 12)
@@ -119,100 +146,43 @@ with col1:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================
-# RIGHT PANEL – FUTURISTIC AI CHILD LAB
+# RIGHT PANEL – 3D CHILD MODEL
 # =========================
 with col2:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("🤖 AI Child Growth Lab")
+    st.subheader("3D Child Visualization")
 
     scale = height / 80
 
-    # Default futuristic glow
-    glow_color = "#00e5ff"
-
-    futuristic_html = f"""
+    model_html = f"""
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-
-    <style>
-    .lab-container {{
-        display:flex;
-        align-items:center;
-        justify-content:center;
-        gap:30px;
-    }}
-
-    .ruler {{
-        width:60px;
-        height:400px;
-        background: linear-gradient(to top, #00e5ff, #ff00ff);
-        border-radius:20px;
-        position:relative;
-        box-shadow: 0 0 25px #00e5ff;
-    }}
-
-    .marker {{
-        position:absolute;
-        width:100%;
-        height:3px;
-        background:white;
-    }}
-
-    .height-label {{
-        position:absolute;
-        left:70px;
-        top:50%;
-        font-weight:bold;
-        color:white;
-    }}
-
-    model-viewer {{
-        width:350px;
-        height:400px;
-        filter: drop-shadow(0 0 25px {glow_color});
-    }}
-    </style>
-
-    <div class="lab-container">
-
-        <!-- HEIGHT RULER -->
-        <div class="ruler">
-            <div class="marker" style="top:10%;"></div>
-            <div class="marker" style="top:30%;"></div>
-            <div class="marker" style="top:50%;"></div>
-            <div class="marker" style="top:70%;"></div>
-            <div class="marker" style="top:90%;"></div>
-            <div class="height-label">{height} cm</div>
-        </div>
-
-        <!-- 3D CHILD MODEL -->
-        <model-viewer
-          src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
-          auto-rotate
-          camera-controls
-          shadow-intensity="1"
-          exposure="1.2"
-          scale="{scale} {scale} {scale}">
-        </model-viewer>
-
-    </div>
+    <model-viewer
+      src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      exposure="1"
+      scale="{scale} {scale} {scale}"
+      style="width:100%; height:420px; background:transparent;">
+    </model-viewer>
     """
 
-    components.html(futuristic_html, height=460)
+    components.html(model_html, height=450)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================
 # ANALYSIS BUTTON
 # =========================
-if st.button("🔬 Run Clinical Assessment"):
+if st.button("🔬 Run Pediatric Assessment"):
 
     input_data = np.array([[age, height, weight, muac]])
     prediction = model.predict(input_data)[0]
     probability = model.predict_proba(input_data)[0][prediction]
 
-    # Machine Beep Sound
+    # Soft Pediatric Sound
     st.markdown("""
     <audio autoplay>
-      <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
+      <source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mpeg">
     </audio>
     """, unsafe_allow_html=True)
 
@@ -222,15 +192,20 @@ if st.button("🔬 Run Clinical Assessment"):
 
     with result_col1:
         st.markdown('<div class="card">', unsafe_allow_html=True)
-        st.subheader("Diagnosis Result")
+        st.subheader("AI Diagnosis")
 
         if prediction == 0:
-            st.success("Patient Status: HEALTHY")
+            st.markdown(
+                "<h2 style='color:green;'>🎉 Great News! Child is Healthy</h2>",
+                unsafe_allow_html=True
+            )
         else:
-            st.error("Patient Status: MALNUTRITION RISK")
+            st.markdown(
+                "<h2 style='color:red;'>⚠️ Nutritional Attention Required</h2>",
+                unsafe_allow_html=True
+            )
 
-        st.metric("AI Confidence", f"{probability*100:.2f}%")
-
+        st.metric("AI Confidence Level", f"{probability*100:.2f}%")
         st.markdown('</div>', unsafe_allow_html=True)
 
     with result_col2:
@@ -240,4 +215,4 @@ if st.button("🔬 Run Clinical Assessment"):
         st.markdown('</div>', unsafe_allow_html=True)
 
 st.write("---")
-st.caption("Clinical AI System | Developed by Syeda Huda | AI for Social Impact")
+st.caption("Pediatric AI System | Developed by Syeda Huda | AI for Social Impact")
