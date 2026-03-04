@@ -119,28 +119,85 @@ with col1:
     st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================
-# RIGHT PANEL – 3D PATIENT
+# RIGHT PANEL – FUTURISTIC AI CHILD LAB
 # =========================
 with col2:
     st.markdown('<div class="card">', unsafe_allow_html=True)
-    st.subheader("3D Patient Model")
+    st.subheader("🤖 AI Child Growth Lab")
 
     scale = height / 80
 
-    model_html = f"""
+    # Default futuristic glow
+    glow_color = "#00e5ff"
+
+    futuristic_html = f"""
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <model-viewer
-      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-      auto-rotate
-      camera-controls
-      shadow-intensity="1"
-      scale="{scale} {scale} {scale}"
-      style="width:100%; height:400px;">
-    </model-viewer>
+
+    <style>
+    .lab-container {{
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        gap:30px;
+    }}
+
+    .ruler {{
+        width:60px;
+        height:400px;
+        background: linear-gradient(to top, #00e5ff, #ff00ff);
+        border-radius:20px;
+        position:relative;
+        box-shadow: 0 0 25px #00e5ff;
+    }}
+
+    .marker {{
+        position:absolute;
+        width:100%;
+        height:3px;
+        background:white;
+    }}
+
+    .height-label {{
+        position:absolute;
+        left:70px;
+        top:50%;
+        font-weight:bold;
+        color:white;
+    }}
+
+    model-viewer {{
+        width:350px;
+        height:400px;
+        filter: drop-shadow(0 0 25px {glow_color});
+    }}
+    </style>
+
+    <div class="lab-container">
+
+        <!-- HEIGHT RULER -->
+        <div class="ruler">
+            <div class="marker" style="top:10%;"></div>
+            <div class="marker" style="top:30%;"></div>
+            <div class="marker" style="top:50%;"></div>
+            <div class="marker" style="top:70%;"></div>
+            <div class="marker" style="top:90%;"></div>
+            <div class="height-label">{height} cm</div>
+        </div>
+
+        <!-- 3D CHILD MODEL -->
+        <model-viewer
+          src="https://modelviewer.dev/shared-assets/models/RobotExpressive.glb"
+          auto-rotate
+          camera-controls
+          shadow-intensity="1"
+          exposure="1.2"
+          scale="{scale} {scale} {scale}">
+        </model-viewer>
+
+    </div>
     """
 
-    components.html(model_html, height=420)
-
+    components.html(futuristic_html, height=460)
     st.markdown('</div>', unsafe_allow_html=True)
 
 # =========================
