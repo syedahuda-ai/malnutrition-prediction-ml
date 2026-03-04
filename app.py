@@ -1,132 +1,186 @@
 import streamlit as st
-import pandas as pd
 import numpy as np
 import pickle
 import plotly.graph_objects as go
+import streamlit.components.v1 as components
 
-# ----------------------------
+# -------------------------
 # PAGE CONFIG
-# ----------------------------
+# -------------------------
 st.set_page_config(
-    page_title="Child Malnutrition Predictor",
-    page_icon="🩺",
+    page_title="Pediatric Clinical AI System",
+    page_icon="🏥",
     layout="wide"
 )
 
-# ----------------------------
-# CUSTOM CSS (MODERN UI)
-# ----------------------------
-st.markdown("""
+# -------------------------
+# THEME TOGGLE
+# -------------------------
+dark_mode = st.sidebar.toggle("🌙 ICU Dark Mode")
+
+if dark_mode:
+    bg = "#0b1120"
+    card_bg = "rgba(15,23,42,0.85)"
+    text = "white"
+else:
+    bg = "#f4f8fb"
+    card_bg = "rgba(255,255,255,0.9)"
+    text = "#0f172a"
+
+# -------------------------
+# GLOBAL HOSPITAL CSS
+# -------------------------
+st.markdown(f"""
 <style>
-.main {
-    background: linear-gradient(to right, #f5f7fa, #c3cfe2);
-}
-.big-title {
-    font-size:40px !important;
+body {{
+    background: {bg};
+    color: {text};
+}}
+
+.main {{
+    background: {bg};
+}}
+
+.hospital-title {{
+    font-size:42px;
     font-weight:800;
-    text-align:center;
-    color:#2C3E50;
-}
-.result-box {
-    padding:20px;
+    color:#1e3a8a;
+}}
+
+.card {{
+    background:{card_bg};
+    backdrop-filter: blur(25px);
+    padding:25px;
+    border-radius:20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.25);
+    margin-bottom:20px;
+}}
+
+.monitor {{
+    height:100px;
+    background:black;
     border-radius:15px;
-    text-align:center;
-    font-size:22px;
-    font-weight:bold;
-}
-.green-box {
-    background-color:#d4edda;
-    color:#155724;
-}
-.red-box {
-    background-color:#f8d7da;
-    color:#721c24;
-}
+    position:relative;
+    overflow:hidden;
+}}
+
+.wave {{
+    position:absolute;
+    width:200%;
+    height:100%;
+    background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 20px,
+        #00ff88 20px,
+        #00ff88 22px
+    );
+    animation: move 3s linear infinite;
+}}
+
+@keyframes move {{
+    from {{ transform: translateX(0); }}
+    to {{ transform: translateX(-50%); }}
+}}
 </style>
 """, unsafe_allow_html=True)
 
-# ----------------------------
+# -------------------------
 # LOAD MODEL
-# ----------------------------
+# -------------------------
 model = pickle.load(open("model.pkl", "rb"))
 
-# ----------------------------
-# TITLE
-# ----------------------------
-st.markdown('<p class="big-title">🩺 Child Malnutrition Prediction System</p>', unsafe_allow_html=True)
-st.markdown("### AI Powered Health Screening Dashboard")
+# -------------------------
+# HEADER
+# -------------------------
+st.markdown('<div class="hospital-title">🏥 Pediatric Clinical AI Monitoring System</div>', unsafe_allow_html=True)
+st.write("Advanced Malnutrition Risk Assessment Dashboard")
 
 st.write("---")
 
-# ----------------------------
-# INPUT SECTION
-# ----------------------------
-col1, col2 = st.columns(2)
+# -------------------------
+# LAYOUT
+# -------------------------
+col1, col2 = st.columns([1,1])
 
+# =========================
+# LEFT PANEL – PATIENT INPUT
+# =========================
 with col1:
-    age = st.slider("Age (Months)", 1, 60, 12)
-    height = st.number_input("Height (cm)", min_value=30.0, max_value=150.0, value=80.0)
-    
-with col2:
-    weight = st.number_input("Weight (kg)", min_value=2.0, max_value=40.0, value=10.0)
-    muac = st.number_input("MUAC (Mid Upper Arm Circumference)", min_value=5.0, max_value=25.0, value=12.0)
+    st.markdown('<div class="card">', unsafe_allow_html=True)
 
-# ----------------------------
-# PREDICTION BUTTON
-# ----------------------------
-if st.button("🔍 Predict Health Status"):
-    
+    st.subheader("Patient Information")
+
+    age = st.slider("Age (Months)", 1, 60, 12)
+    height = st.slider("Height (cm)", 40, 120, 80)
+    weight = st.slider("Weight (kg)", 2, 40, 10)
+    muac = st.slider("MUAC (cm)", 5, 25, 12)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# =========================
+# RIGHT PANEL – 3D PATIENT
+# =========================
+with col2:
+    st.markdown('<div class="card">', unsafe_allow_html=True)
+    st.subheader("3D Patient Model")
+
+    scale = height / 80
+
+    model_html = f"""
+    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <model-viewer
+      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+      auto-rotate
+      camera-controls
+      shadow-intensity="1"
+      scale="{scale} {scale} {scale}"
+      style="width:100%; height:400px;">
+    </model-viewer>
+    """
+
+    components.html(model_html, height=420)
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# =========================
+# ANALYSIS BUTTON
+# =========================
+if st.button("🔬 Run Clinical Assessment"):
+
     input_data = np.array([[age, height, weight, muac]])
     prediction = model.predict(input_data)[0]
     probability = model.predict_proba(input_data)[0][prediction]
 
+    # Machine Beep Sound
+    st.markdown("""
+    <audio autoplay>
+      <source src="https://www.soundjay.com/buttons/sounds/beep-07.mp3" type="audio/mpeg">
+    </audio>
+    """, unsafe_allow_html=True)
+
     st.write("---")
 
-    # RESULT DISPLAY
-    if prediction == 0:
-        st.markdown('<div class="result-box green-box">✅ Healthy Child</div>', unsafe_allow_html=True)
-    else:
-        st.markdown('<div class="result-box red-box">⚠️ Malnourished Child</div>', unsafe_allow_html=True)
+    result_col1, result_col2 = st.columns(2)
 
-    # PROBABILITY BAR (Plotly)
-    fig = go.Figure(go.Bar(
-        x=[probability],
-        y=["Prediction Confidence"],
-        orientation='h',
-        marker=dict(color='green' if prediction == 0 else 'red')
-    ))
+    with result_col1:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("Diagnosis Result")
 
-    fig.update_layout(
-        title="Model Confidence Level",
-        xaxis=dict(range=[0,1]),
-        height=300
-    )
+        if prediction == 0:
+            st.success("Patient Status: HEALTHY")
+        else:
+            st.error("Patient Status: MALNUTRITION RISK")
 
-    st.plotly_chart(fig, use_container_width=True)
+        st.metric("AI Confidence", f"{probability*100:.2f}%")
 
-    # HEIGHT-WEIGHT VISUAL
-    scatter_fig = go.Figure()
-    scatter_fig.add_trace(go.Scatter(
-        x=[height],
-        y=[weight],
-        mode='markers',
-        marker=dict(
-            size=20,
-            color='green' if prediction == 0 else 'red'
-        ),
-        name="Child Data"
-    ))
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    scatter_fig.update_layout(
-        title="Height vs Weight Visualization",
-        xaxis_title="Height (cm)",
-        yaxis_title="Weight (kg)"
-    )
+    with result_col2:
+        st.markdown('<div class="card">', unsafe_allow_html=True)
+        st.subheader("Vital Monitor Simulation")
+        st.markdown('<div class="monitor"><div class="wave"></div></div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)
 
-    st.plotly_chart(scatter_fig, use_container_width=True)
-
-# ----------------------------
-# FOOTER
-# ----------------------------
 st.write("---")
-st.markdown("Built with ❤️ by Syeda Huda | AI for Social Impact")
+st.caption("Clinical AI System | Developed by Syeda Huda | AI for Social Impact")
