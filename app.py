@@ -438,23 +438,7 @@ elif page == "🍼 Baby Health Check":
                 st.markdown('<div class="magic-card" style="height: 350px;">', unsafe_allow_html=True)
                 st.markdown('<h2 style="text-align: center;">💓 Magic Heart Monitor</h2>', unsafe_allow_html=True)
                 
-                # Animated Heart Monitor
-                st.markdown("""
-                <div style="text-align: center; padding: 20px;">
-                    <div style="height: 120px; background: linear-gradient(90deg, #000, #001122); 
-                                border-radius: 20px; position: relative; overflow: hidden; margin: 20px 0;">
-                        <div style="position: absolute; width: 100%; height: 100%; 
-                                   background: repeating-linear-gradient(90deg, transparent 0, transparent 25px, 
-                                   #00FF88 25px, #00FF88 27px, transparent 27px);
-                                   animation: heartbeat 2s linear infinite;"></div>
-                        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
-                                   font-size: 2rem; color: #00FF88;">♥ ♥ ♥ ♥ ♥</div>
-                    </div>
-                    <h3 style="color: #00FF88;">All Vitals Perfect! ✨</h3>
-                </div>
-                """, unsafe_allow_html=True)
-                
-                st.markdown('</div>', unsafe_allow_html=True)
+               
             
             # Success Animation
             st.balloons()
