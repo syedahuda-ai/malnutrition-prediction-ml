@@ -364,31 +364,36 @@ elif page == "🍼 Baby Health Check":
         st.markdown('</div>', unsafe_allow_html=True)
     
    # =========================
-# RIGHT PANEL – 3D CHILD MODEL
-# =========================
+# RIGHT: 3D MODEL
 with col2:
     st.markdown("""
     <div class="magic-card">
-        <h2 style="text-align: center;">👶 Your Baby's Avatar</h2>
+        <h2 style="text-align:center;">👶 Your Baby's Avatar</h2>
     </div>
     """, unsafe_allow_html=True)
 
-    scale = height / 80 if height else 1
+    scale = height / 80
 
     model_html = f"""
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    <script type="module"
+    src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
 
-    <div style="border-radius:25px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
-    
-    <model-viewer
-      src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-      auto-rotate
-      camera-controls
-      shadow-intensity="1"
-      exposure="0.8"
-      scale="0.8 {scale*0.6} 0.8"
-      style="width:100%; height:500px; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));">
-    </model-viewer>
+    <div style="border-radius:25px; overflow:hidden;
+                box-shadow:0 20px 40px rgba(0,0,0,0.3);">
+
+        <model-viewer
+          src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
+          auto-rotate
+          camera-controls
+          shadow-intensity="1"
+          exposure="0.8"
+          scale="0.8 {scale*0.6} 0.8"
+          style="width:100%; height:500px;
+          background:linear-gradient(135deg,
+          rgba(255,255,255,0.1),
+          rgba(255,255,255,0.05));">
+
+        </model-viewer>
 
     </div>
     """
