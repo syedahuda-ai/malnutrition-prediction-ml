@@ -363,7 +363,7 @@ elif page == "🍼 Baby Health Check":
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-   "# MAGIC BUTTON
+# MAGIC BUTTON
     st.markdown('<div style="text-align: center; margin: 40px 0;"></div>', unsafe_allow_html=True)
     
     if st.button("🌟✨ RUN MAGICAL HEALTH CHECK ✨🌟", key="magic_btn", help="Click for magic!"):
