@@ -363,48 +363,7 @@ elif page == "🍼 Baby Health Check":
         
         st.markdown('</div>', unsafe_allow_html=True)
     
-    # ONLY CHANGE - Replace the 3D MODEL section (lines around 250-265) with this FIXED version:
-
-with col2:
-    st.markdown("""
-    <div class="magic-card">
-        <h2 style="text-align: center;">👶 Your Baby's Avatar</h2>
-    </div>
-    """, unsafe_allow_html=True)
-    
-    scale = height / 80
-    
-    # ✅ FIXED BABY MODEL - WORKING 100%
-    model_html = f"""
-    <!DOCTYPE html>
-    <html>
-    <head>
-        <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    </head>
-    <body>
-        <div style="width:100%; height:450px; border-radius:25px; overflow:hidden; box-shadow:0 20px 40px rgba(0,0,0,0.3);">
-            <model-viewer
-                src="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-                auto-rotate
-                camera-controls
-                shadow-intensity="1"
-                exposure="0.8"
-                scale="0.8 {scale*0.6} 0.8"
-                style="width:100%; height:100%; background: linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.05));"
-                camera-orbit="45deg 55deg 105%"
-                ar
-                loading="eager">
-            </model-viewer>
-        </div>
-    </body>
-    </html>
-    """
-    
-    components.html(model_html, height=480, scrolling=False)
-
-
-    
-    # MAGIC BUTTON
+   "# MAGIC BUTTON
     st.markdown('<div style="text-align: center; margin: 40px 0;"></div>', unsafe_allow_html=True)
     
     if st.button("🌟✨ RUN MAGICAL HEALTH CHECK ✨🌟", key="magic_btn", help="Click for magic!"):
